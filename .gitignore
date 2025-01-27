@@ -1,0 +1,5 @@
+out
+.vs
+pdcurses
+build
+.cache
