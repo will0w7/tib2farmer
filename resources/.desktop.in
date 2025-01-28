@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=@PROJECT_NAME@
+Comment=The Infinite Black 2 farming tracker
+Exec=@CMAKE_INSTALL_PREFIX@/bin/@PROJECT_NAME@
+Icon=@CMAKE_INSTALL_PREFIX@/share/icons/@PROJECT_NAME@
+Terminal=true
+Categories=Utility;

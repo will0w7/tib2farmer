@@ -38,11 +38,11 @@ Defined by this header:
          /* NOTE : For version changes that are not backward compatible, */
          /* the 'endwin_*' #defines below should be updated.             */
 #define PDC_VER_MAJOR    4
-#define PDC_VER_MINOR    4
+#define PDC_VER_MINOR    5
 #define PDC_VER_CHANGE   0
-#define PDC_VER_YEAR   2023
-#define PDC_VER_MONTH    11
-#define PDC_VER_DAY      30
+#define PDC_VER_YEAR   2024
+#define PDC_VER_MONTH    12
+#define PDC_VER_DAY      31
 
 #define PDC_STRINGIZE( x) #x
 #define PDC_stringize( x) PDC_STRINGIZE( x)
@@ -60,6 +60,8 @@ Defined by this header:
                     PDC_stringize( PDC_VER_MONTH) "-" \
                     PDC_stringize( PDC_VER_DAY)
 #endif
+
+#define PDC_VERSION_PATCH (PDC_VER_YEAR * 10000 + PDC_VER_MONTH * 100 + PDC_VER_DAY)
 
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 # define PDC_99         1
@@ -167,7 +169,8 @@ enum PDC_port
     PDC_PORT_DOSVGA = 8,
     PDC_PORT_PLAN9 = 9,
     PDC_PORT_LINUX_FB = 10,
-    PDC_PORT_OPENGL = 11
+    PDC_PORT_OPENGL = 11,
+    PDC_PORT_OS2GUI = 12
 };
 
 /* Use this structure with PDC_get_version() for run-time info about the
@@ -1758,8 +1761,12 @@ PDCEX  char    wordchar(void);
 PDCEX  wchar_t *slk_wlabel(int);
 #endif
 
-PDCEX  bool    PDC_getcbreak(void);
-PDCEX  bool    PDC_getecho(void);
+PDCEX  int     is_cbreak( void);
+PDCEX  int     is_echo( void);
+PDCEX  int     is_nl( void);
+PDCEX  int     is_raw( void);
+PDCEX  bool    PDC_getcbreak(void);    /* deprecated;  use is_cbreak() */
+PDCEX  bool    PDC_getecho(void);      /* deprecated;  use is_echo()   */
 PDCEX  void    PDC_debug(const char *, ...);
 PDCEX  void    _tracef(const char *, ...);
 PDCEX  void    PDC_get_version(PDC_VERSION *);
@@ -1768,7 +1775,6 @@ PDCEX  int     PDC_set_blink(bool);
 PDCEX  int     PDC_set_bold(bool);
 PDCEX  int     PDC_set_line_color(short);
 PDCEX  void    PDC_set_title(const char *);
-PDCEX  int     PDC_set_box_type( const int box_type);
 
 PDCEX  int     PDC_clearclipboard(void);
 PDCEX  int     PDC_freeclipboard(char *);
@@ -1844,14 +1850,6 @@ PDCEX  int     wunderscore(WINDOW *);
 
 #define PDC_save_key_modifiers(x)  (OK)
 #define PDC_get_input_fd()         0
-
-/* masks for PDC_set_box_type() */
-
-#define PDC_BOX_DOUBLED_V        1
-#define PDC_BOX_DOUBLED_H        2
-#ifdef PDC_WIDE
-   #define PDC_BOX_THICK            4
-#endif
 
 /* return codes from PDC_getclipboard() and PDC_setclipboard() calls */
 
