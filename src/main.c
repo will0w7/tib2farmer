@@ -360,7 +360,6 @@ char* formatFloat(float num, int precision) {
 
 int main() {
     setlocale(LC_ALL, "");
-
     initscr();
     noecho();
     cbreak();
