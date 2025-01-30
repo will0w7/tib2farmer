@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <tchar.h>
+#include <winscard.h>
 #include <winuser.h>
 #include <errhandlingapi.h>
 
@@ -19,10 +20,10 @@
 #define PDC_FORCE_UTF8 1
 #include "../include/curses.h"
 
-#define TARGET_FPS 2
+#define TARGET_FPS 4
 #define TICK_DURATION 1000 / TARGET_FPS
 
-#define MAGIC_NUMBER_CURRENCIES 443799
+#define OBF_MAGIC_NUMBER 443799
 
 #define CREDITS_VALUE 1
 #define SKULLS_VALUE 700
@@ -162,9 +163,9 @@ Currencies getCurrencies(DWORD pID, HANDLE processHandle) {
     if (!readMemory(currenciesAddress, &currencies, sizeof(currencies), processHandle))
         return currencies;
 
-    currencies.credits += MAGIC_NUMBER_CURRENCIES;
-    currencies.skulls += MAGIC_NUMBER_CURRENCIES;
-    currencies.techPoints += MAGIC_NUMBER_CURRENCIES;
+    currencies.credits += OBF_MAGIC_NUMBER;
+    currencies.skulls += OBF_MAGIC_NUMBER;
+    currencies.techPoints += OBF_MAGIC_NUMBER;
     return currencies;
 }
 
@@ -256,6 +257,36 @@ float getPlayerLevel(DWORD pID, HANDLE processHandle) {
         return playerLevel;
     }
     return playerLevel;
+}
+
+int getPlayerExp(DWORD pID, HANDLE processHandle) {
+    int playerExp = 0;
+    char moduleName[] = "UnityPlayer.dll";
+    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(moduleName), pID);
+    if (gameBaseAddress == 0) {
+        return playerExp;
+    }
+
+    const uintptr_t offsetGameToBaseAddress = 0x01CA6330;
+    const uintptr_t pointsOffsets[] = {0x160, 0x8, 0x70, 0x0, 0x28, 0x30, 0x108};
+
+    uintptr_t baseAddress = 0;
+    if (!readMemory(gameBaseAddress + offsetGameToBaseAddress, &baseAddress, sizeof(baseAddress), processHandle)) {
+        return playerExp;
+    }
+
+    uintptr_t levelAddress = baseAddress;
+    for (int i = 0; i < 6; i++) {
+        if (!readMemory(levelAddress + pointsOffsets[i], &levelAddress, sizeof(levelAddress), processHandle)) {
+            return playerExp;
+        }
+    }
+    levelAddress += pointsOffsets[6];
+
+    if (!readMemory(levelAddress, &playerExp, sizeof(playerExp), processHandle)) {
+        return playerExp;
+    }
+    return playerExp + OBF_MAGIC_NUMBER;
 }
 
 void writeString(const char* string, int y, int x, int pair) {
@@ -365,6 +396,7 @@ int main() {
     cbreak();
     start_color();
     curs_set(0);
+    nodelay(stdscr, TRUE);
     timeout(TICK_DURATION);
     raw();
 
@@ -432,7 +464,10 @@ int main() {
 
         time_t startTime = time(NULL);
         time_t nowTime = time(NULL);
+        bool paused = false;
+        // int pausedTime = 0;
         int elapsedSeconds = 0;
+        time_t pauseStartTime = 0;
 
         char timeBuffer[9];
 
@@ -440,23 +475,44 @@ int main() {
         Resources startResources = getResources(pID, processHandle);
         Relics startRelics = getRelics(pID, processHandle);
         float startPlayerLevel = getPlayerLevel(pID, processHandle);
+        int startPlayerExp = getPlayerExp(pID, processHandle);
 
         Currencies currencies = {0};
         Resources resources = {0};
         Relics relics = {0};
         float playerLevel = 0.0f;
+        int playerExp = 0;
 
         while (running) {
+            char input = getch();
+            if (input != ERR) {
+                switch (input) {
+                case 'q':
+                    running = false;
+                    break;
+                case 'p':
+                    paused = !paused;
+                    if (paused) {
+                        pauseStartTime = time(NULL);
+                    } else {
+                        startTime += difftime(time(NULL), pauseStartTime);
+                    }
+                    break;
+                }
+            }
+
             erase();
 
             currencies = getCurrencies(pID, processHandle);
             resources = getResources(pID, processHandle);
             relics = getRelics(pID, processHandle);
             playerLevel = getPlayerLevel(pID, processHandle);
+            playerExp = getPlayerExp(pID, processHandle);
 
             nowTime = time(NULL);
-            elapsedSeconds = (int)floor(difftime(nowTime, startTime));
-            snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d:%02d", elapsedSeconds / 3600, (elapsedSeconds % 3600) / 60, elapsedSeconds % 60);
+            if (!paused) {
+                elapsedSeconds = (int)difftime(nowTime, startTime);
+            }
 
             const int creds = currencies.credits - startCurrencies.credits;
             const int skulls = currencies.skulls - startCurrencies.skulls;
@@ -487,6 +543,11 @@ int main() {
             int credsPerHour = 0;
             if (total > 0 && elapsedSeconds > 0) {
                 credsPerHour = (int)floor(((float)total / elapsedSeconds) * 3600);
+            }
+            int totalPlayerExp = playerExp - startPlayerExp;
+            int expPerHour = 0;
+            if (totalPlayerExp > 0 && elapsedSeconds > 0) {
+                expPerHour = (int)floor(((float)totalPlayerExp / elapsedSeconds) * 3600);
             }
 
             // STATICS
@@ -576,10 +637,6 @@ int main() {
             writeString("Creds/h:", 20, 50, 0);
             writeString(formatInt(credsPerHour), 20, 60, getColorPair(total));
 
-            // Time
-            writeString("Elapsed:", 23, 53, 0);
-            writeString(timeBuffer, 23, 64, 1);
-
             // XP
             writeString("Player Level:", 19, 2, 0);
             writeString(formatFloat(playerLevel, 7), 19, 18, 0);
@@ -588,27 +645,27 @@ int main() {
             writeString(formatFloat(levelDelta, 7), 20, 18, 0);
 
             writeString("Time to level:", 21, 2, 0);
-            if (secondsToLevelUp == 0) {
-                snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d:%02d", 99, 59, 59);
-            } else {
-                snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d:%02d", secondsToLevelUp / 3600, (secondsToLevelUp % 3600) / 60, secondsToLevelUp % 60);
-            }
+            snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d:%02d", secondsToLevelUp / 3600, (secondsToLevelUp % 3600) / 60, secondsToLevelUp % 60);
             writeString(timeBuffer, 21, 22, 6);
 
-            // END
-            writeString("Press 'Q' to exit", 23, 2, 3);
-            // Draw
-            refresh();
+            writeString("Exp/h:", 22, 2, 0);
+            writeString(formatInt(expPerHour), 22, 18, 6);
 
-            int input = getch();
-            if (input == 'q') {
-                running = false;
-            }
+            // END
+            writeString("Elapsed:", 24, 53, 0);
+            snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d:%02d", elapsedSeconds / 3600, (elapsedSeconds % 3600) / 60, elapsedSeconds % 60);
+            writeString(timeBuffer, 24, 64, 1);
+
+            writeString("Press P to pause/resume the timer", 24, 2, 0);
+            writeString("Press 'Q' to exit", 25, 2, 3);
 
             if (!IsWindow(hGameWindow)) {
                 printError("Lost Game Window");
                 break;
             }
+
+            // Draw
+            refresh();
         }
     }
 

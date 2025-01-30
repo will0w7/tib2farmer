@@ -23,6 +23,7 @@ target_link_libraries(tib2farmer
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_options(tib2farmer PRIVATE -g3 -O0)
+  target_link_options(tib2farmer PRIVATE -static-libgcc -static-libstdc++ -static)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
   target_compile_options(tib2farmer PRIVATE -O2 -march=native -s)
   target_link_options(tib2farmer PRIVATE -static-libgcc -static-libstdc++ -static)
