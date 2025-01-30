@@ -122,7 +122,7 @@ DWORD getPID(HWND hGameWindow) {
 }
 
 HANDLE getHandle(DWORD pID) {
-    HANDLE processHandle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, pID);
+    HANDLE processHandle = OpenProcess(PROCESS_VM_READ, FALSE, pID);
     if (processHandle == NULL) {
         printError("OpenProcess");
         return NULL;
