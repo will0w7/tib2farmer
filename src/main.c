@@ -315,26 +315,40 @@ int getColorPairIm(int value) {
 
 char* formatInt(int num) {
     static char formattedNum[32];
-    snprintf(formattedNum, sizeof(formattedNum), "%d", num); // Convertir el número a string sin espacios
+    snprintf(formattedNum, sizeof(formattedNum), "%d", num);
     size_t len = strlen(formattedNum);
+
+    int isNegative = 0;
+
+    if (num < 0) {
+        isNegative = 1;
+        len--;
+    }
 
     size_t formattedLen = len + (len - 1) / 3;
 
-    if (formattedLen + 1 > sizeof(formattedNum)) {
+    if (formattedLen + isNegative + 1 > sizeof(formattedNum)) {
         return formattedNum;
     }
 
     char result[32];
     size_t j = 0;
+    size_t k = 0;
+
+    if (isNegative) {
+        result[j++] = '-';
+        k++;
+    }
+
     for (size_t i = 0; i < len; i++) {
         if ((len - i) % 3 == 0 && i != 0) {
             result[j++] = ',';
         }
-        result[j++] = formattedNum[i];
+        result[j++] = formattedNum[k++];
     }
     result[j] = '\0';
 
-    int spaces = 12 - formattedLen;
+    int spaces = 12 - strlen(result);
     if (spaces < 0)
         spaces = 0;
 
@@ -354,8 +368,12 @@ char* formatFloat(float num, int precision) {
     snprintf(integerPart, sizeof(integerPart), "%.0f", intPart);
     size_t lenInt = strlen(integerPart);
 
+    if (num < 0) {
+        lenInt--;
+    }
+
     snprintf(decimalPart, sizeof(decimalPart), "%.*f", precision, decPart);
-    size_t lenDec = strlen(decimalPart) - 2; // Longitud sin "0."
+    size_t lenDec = strlen(decimalPart) - 2;
 
     size_t formattedLen = lenInt + (lenInt - 1) / 3 + 1 + lenDec;
 
@@ -465,7 +483,6 @@ int main() {
         time_t startTime = time(NULL);
         time_t nowTime = time(NULL);
         bool paused = false;
-        // int pausedTime = 0;
         int elapsedSeconds = 0;
         time_t pauseStartTime = 0;
 
