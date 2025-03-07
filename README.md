@@ -1,35 +1,70 @@
-**TIB2Farmer**
+# TIB2Farmer
 
-**How to use it?**
+TIB2Farmer is a simple, open-source terminal application for Windows that automatically tracks resources in the game [**The Infinite Black 2**]. It's designed to be lightweight and easy to use.
 
-With the game open and logged in, launch the app and that's it. The counter starts counting :)
+**Note:** This project is currently in *alpha*. It may have bugs and is subject to change.
 
-This is a terminal app, it is recommended to use the Terminal app to run it. If you don't have it installed, you can download it from the Microsoft Store (https://apps.microsoft.com/detail/9n0dx20hk701).
+## Features
 
-> If you lose the session (you get disconnected due to an internet outage, for example) it will try to continue where it was, but this functionality is not very tested (as I said, it's an alpha).
+*   Automatic resource tracking in [**The Infinite Black 2**].
+*   Simple, terminal-based interface.
+*   Attempts to resume tracking after disconnections.
 
-Secret mode: Run the app before opening the game and it will show you the value of all the coins and resources you have :P
+## Installation
 
-**FAQ:**
-Is this app secure for my PC or files?
-> Yes, it is. I don't want to steal your My Little Pony account, don't worry. You can always read the code and audit it, it's simple.
+1.  **Download:** Download the latest release of TIB2Farmer from the [Releases](https://github.com/will0w7/tib2farmer/releases) section of this repository. *Make sure to download the compiled executable (.exe), not the source code.*
+2.  **Run:**  No installation is required. Simply double-click the downloaded `.exe` file (after running the game).
+3. **Windows Terminal (Recommended):** For the best experience, it's recommended to use the Windows Terminal app. You can download it from the Microsoft Store: [Windows Terminal](https://apps.microsoft.com/detail/9n0dx20hk701)
 
-What programming language is it programmed in?
-> C
+## Usage
 
-Is the source code open source?
-> Yes, it is. You can find it in my GitHub here: [Tib2Farmer](https://github.com/will0w7/tib2farmer)
+1.  **Normal Mode:** Open [**The Infinite Black 2**] and log in. Then, launch TIB2Farmer. The resource counter will start automatically.
+2.  **Secret Mode:** Launch TIB2Farmer *before* opening [**The Infinite Black 2**]. This will display the current values of all your coins and resources. It's not a feature itself, but can be useful.
 
-Why doesn't the app have an icon? Is this correct?
-> I had made an icon for the app and put it there, but it made it weigh more than twice as much and I took it away.
+**Important Notes:**
 
-How do I know if it works on my PC?
-> It only works in **Windows**. Tested by me in all latest Windows 11 versions, and tested in Windows 10 too. But just try it :)
+*   If you experience a disconnection, TIB2Farmer will attempt to resume tracking.
 
-**Keep in mind 4 things:**
-1. It's an alpha, it's not finished and it doesn't intend to be for a while.
-2. After a patch to the game it's possible that the app will also need a patch.
-3. I do it for free and I don't offer a personalized request service. I gladly accept suggestions, but I'm not going to implement whatever anyone wants. Like all the addons or tools I program, I want to keep it as simple as possible.
-4. It's tested on Steam version and the version downloaded from tib2.com on Windows 11 (24H2). I'm not sure if it can work on Windows 10 or outdated versions of both operating systems (don't ask for older OS or linux).
+## FAQ
 
-If you have any problems, **create a GitHub issue**. Try not to talk to me privately :)
+**Q: Is TIB2Farmer safe for my PC?**
+
+A: Yes. TIB2Farmer is a simple application that only reads information from the game memory (RAM). It does not modify any game files or access any personal data. The source code is open-source and available for review on GitHub.
+
+**Q: What programming language is TIB2Farmer written in?**
+
+A: TIB2Farmer is written in C.
+
+**Q: Is the source code available?**
+
+A: Yes! You can find the source code on GitHub: [TIB2Farmer](https://github.com/will0w7/tib2farmer)
+
+**Q: Why doesn't the app have an icon?**
+
+A: An icon was originally included, but it significantly increased the file size. To keep TIB2Farmer lightweight, the icon was removed.
+
+**Q: Will TIB2Farmer work on my PC?**
+
+A: TIB2Farmer is designed for **Windows only**. It has been tested on Windows 11 (including 24H2) and Windows 10. It may not work on older versions of Windows or other operating systems (e.g., Linux, macOS). The application has been tested with both the Steam version and the version downloaded from tib2.com.
+
+## Important Considerations
+
+1.  **Alpha Status:** TIB2Farmer is currently in alpha. It may contain bugs.
+2.  **Game Updates:**  After a game patch, TIB2Farmer may require an update to function correctly.
+3.  **Development:**  This project is developed in my free time. I welcome suggestions, but I cannot guarantee that all feature requests will be implemented. I aim to keep TIB2Farmer as simple and focused as possible.
+4.  **Supported Platforms:** TIB2Farmer is primarily tested on Windows 11 (24H2) with both the Steam and tib2.com versions of the game. Compatibility with Windows 10 and older versions is not guaranteed.
+
+## Issues and Support
+
+If you encounter any problems or have suggestions, please **create a GitHub issue** on this repository. This helps me keep track of everything in one place. Please avoid contacting me privately.
+
+## Dependencies / Acknowledgements
+
+This application uses the following libraries:
+
+*   **PDCursesMod:** A modified version of PDCurses. Public Domain. Thanks to the maintainers and contributors. [https://github.com/Bill-Gray/PDCursesMod](https://github.com/Bill-Gray/PDCursesMod)
+*   **PDCurses (original):** Public Domain. Thanks to the original authors.
+
+## License
+
+This project (TIB2Farmer) is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
