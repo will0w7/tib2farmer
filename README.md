@@ -18,7 +18,7 @@ What programming language is it programmed in?
 > C
 
 Is the source code open source?
-> Yes. You can find it in my github here: [Tib2Farmer](https://github.com/will0w7/tib2farmer)
+> Yes, it is. You can find it in my GitHub here: [Tib2Farmer](https://github.com/will0w7/tib2farmer)
 
 Why doesn't the app have an icon? Is this correct?
 > I had made an icon for the app and put it there, but it made it weigh more than twice as much and I took it away.
@@ -32,4 +32,4 @@ How do I know if it works on my PC?
 3. I do it for free and I don't offer a personalized request service. I gladly accept suggestions, but I'm not going to implement whatever anyone wants. Like all the addons or tools I program, I want to keep it as simple as possible.
 4. It's tested on Steam version and the version downloaded from tib2.com on Windows 11 (24H2). I'm not sure if it can work on Windows 10 or outdated versions of both operating systems (don't ask for older OS or linux).
 
-If you have any problems, **create a github issue**. Try not to talk to me privately :)
+If you have any problems, **create a GitHub issue**. Try not to talk to me privately :)
