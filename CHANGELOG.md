@@ -27,9 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 *   **Increased Data Update Rate:** The data now updates four times per second (twice as fast as before).
-*   **Code Refactoring:** Minor code adjustments and improvements for better maintainability and performance. (It's helpful to be a *little* more specific than just "Minor code adjustments" if possible.  Even a vague hint like "improvements for performance" is good.)
+*   **Code Refactoring:** Minor code adjustments and improvements for better maintainability and performance.
 
 ## [0.1.0] - 2025-01-28
 
 ### Added
-* Initial Release
+* Initial Release.
