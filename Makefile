@@ -16,7 +16,7 @@ all: clean config build
 
 config:
 	@if not exist "$(BUILD_DIR)" ( \
-		echo Creando directorio "$(BUILD_DIR)" && \
+		echo Making directory "$(BUILD_DIR)" && \
 		$(MKDIR) "$(BUILD_DIR)" \
 	)
 	$(CMAKE) -B "$(BUILD_DIR)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)

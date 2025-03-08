@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(tib2farmer VERSION 0.2.1 LANGUAGES C)
+project(tib2farmer VERSION 0.2.2 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 23)
 
@@ -27,7 +27,6 @@ set(HEADER_FILES
     src/pdc_config.h
 )
 
-# Añadir el ejecutable
 add_executable(tib2farmer
     ${SOURCE_FILES}
     ${HEADER_FILES}
