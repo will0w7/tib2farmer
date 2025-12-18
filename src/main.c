@@ -29,7 +29,7 @@ int main() {
     init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(8, COLOR_RED, COLOR_WHITE);
 
-    GameData gameData = {NULL, 0, NULL, NULL};
+    GameData gameData = {NULL, 0, NULL, NULL, NULL};
     Timer timer;
     Currencies startCurrencies;
     Resources startResources;
@@ -104,8 +104,11 @@ int main() {
     }
 
     endwin();
-    if (gameData.moduleName != NULL) {
-        free(gameData.moduleName);
+    if (gameData.monoModuleName != NULL) {
+        free(gameData.monoModuleName);
+    }
+    if (gameData.unityModuleName != NULL) {
+        free(gameData.unityModuleName);
     }
     return EXIT_SUCCESS;
 }

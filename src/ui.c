@@ -11,6 +11,7 @@
 #define CREDITS_VALUE 1
 #define SKULLS_VALUE 700
 #define TP_VALUE 1000
+#define SHARDS_VALUE 10000 / 20
 
 #define CREW_VALUE 100 / 100
 #define ORGANIC_VALUE 400 / 100
@@ -21,7 +22,7 @@
 
 #define HUMAN_VALUE 2000
 #define WYRD_VALUE 1500
-#define HETS_VALUE 1500
+#define HET_VALUE 1500
 #define PREC_VALUE 2000
 
 void writeString(const char* string, int y, int x, int pair) {
@@ -154,6 +155,7 @@ void drawUI(const GameData* gameData, const Timer* timer, const Currencies* star
     const int creds = currencies.credits - startCurrencies->credits;
     const int skulls = currencies.skulls - startCurrencies->skulls;
     const int tps = currencies.techPoints - startCurrencies->techPoints;
+    const int shards = currencies.starShards - startCurrencies->starShards;
 
     const int crew = resources.crew - startResources->crew;
     const int orgs = resources.organics - startResources->organics;
@@ -167,8 +169,12 @@ void drawUI(const GameData* gameData, const Timer* timer, const Currencies* star
     const int hets = relics.hets - startRelics->hets;
     const int precursors = relics.precursors - startRelics->precursors;
 
-    const int total = creds * CREDITS_VALUE + skulls * SKULLS_VALUE + tps * TP_VALUE + crew * CREW_VALUE + orgs * ORGANIC_VALUE + gas * GAS_VALUE + metals * METAL_VALUE +
-        radio * RADIOACTIVE_VALUE + dm * DARKMATTER_VALUE;
+    const int total = creds * CREDITS_VALUE + skulls * SKULLS_VALUE + tps * TP_VALUE + shards * SHARDS_VALUE + crew * CREW_VALUE + orgs * ORGANIC_VALUE + gas * GAS_VALUE +
+        metals * METAL_VALUE + radio * RADIOACTIVE_VALUE + dm * DARKMATTER_VALUE + humans * HUMAN_VALUE + wyrds * WYRD_VALUE + hets * HET_VALUE + precursors * PREC_VALUE;
+
+    const int totalValue = currencies.credits * CREDITS_VALUE + currencies.skulls * SKULLS_VALUE + currencies.techPoints * TP_VALUE + currencies.starShards * SHARDS_VALUE +
+        resources.crew * CREW_VALUE + resources.organics * ORGANIC_VALUE + resources.gas * GAS_VALUE + resources.metals * METAL_VALUE + resources.radioactives * RADIOACTIVE_VALUE +
+        resources.darkmatter * DARKMATTER_VALUE + relics.humans * HUMAN_VALUE + relics.wyrds * WYRD_VALUE + relics.hets * HET_VALUE + relics.precursors * PREC_VALUE;
 
     const float levelDelta = playerLevel - startPlayerLevel;
     const float expRate = levelDelta / timer->elapsedSeconds;
@@ -197,30 +203,32 @@ void drawUI(const GameData* gameData, const Timer* timer, const Currencies* star
     writeString(formatInt(startCurrencies->skulls), 4, 16, 0);
     writeString("Tech points:", 5, 2, 0);
     writeString(formatInt(startCurrencies->techPoints), 5, 16, 0);
+    writeString("Star shards:", 6, 2, 0);
+    writeString(formatInt(startCurrencies->starShards), 6, 16, 0);
 
     // Resources
-    writeString("Crew:", 7, 2, 0);
-    writeString(formatInt(startResources->crew), 7, 16, 0);
-    writeString("Organics:", 8, 2, 0);
-    writeString(formatInt(startResources->organics), 8, 16, 0);
-    writeString("Gas:", 9, 2, 0);
-    writeString(formatInt(startResources->gas), 9, 16, 0);
-    writeString("Metals:", 10, 2, 0);
-    writeString(formatInt(startResources->metals), 10, 16, 0);
-    writeString("Radioactives:", 11, 2, 0);
-    writeString(formatInt(startResources->radioactives), 11, 16, 0);
-    writeString("Darkmatter:", 12, 2, 0);
-    writeString(formatInt(startResources->darkmatter), 12, 16, 0);
+    writeString("Crew:", 8, 2, 0);
+    writeString(formatInt(startResources->crew), 8, 16, 0);
+    writeString("Organics:", 9, 2, 0);
+    writeString(formatInt(startResources->organics), 9, 16, 0);
+    writeString("Gas:", 10, 2, 0);
+    writeString(formatInt(startResources->gas), 10, 16, 0);
+    writeString("Metals:", 11, 2, 0);
+    writeString(formatInt(startResources->metals), 11, 16, 0);
+    writeString("Radioactives:", 12, 2, 0);
+    writeString(formatInt(startResources->radioactives), 12, 16, 0);
+    writeString("Darkmatter:", 13, 2, 0);
+    writeString(formatInt(startResources->darkmatter), 13, 16, 0);
 
     // Relics
-    writeString("HumanR:", 14, 2, 0);
-    writeString(formatInt(startRelics->humans), 14, 16, 0);
-    writeString("WyrdR:", 15, 2, 0);
-    writeString(formatInt(startRelics->wyrds), 15, 16, 0);
-    writeString("HetR:", 16, 2, 0);
-    writeString(formatInt(startRelics->hets), 16, 16, 0);
-    writeString("PrecR:", 17, 2, 0);
-    writeString(formatInt(startRelics->precursors), 17, 16, 0);
+    writeString("HumanR:", 15, 2, 0);
+    writeString(formatInt(startRelics->humans), 15, 16, 0);
+    writeString("WyrdR:", 16, 2, 0);
+    writeString(formatInt(startRelics->wyrds), 16, 16, 0);
+    writeString("HetR:", 17, 2, 0);
+    writeString(formatInt(startRelics->hets), 17, 16, 0);
+    writeString("PrecR:", 18, 2, 0);
+    writeString(formatInt(startRelics->precursors), 18, 16, 0);
 
     // DYNAMICS
     writeString("       Earnings       ", 1, 31, 4);
@@ -229,20 +237,21 @@ void drawUI(const GameData* gameData, const Timer* timer, const Currencies* star
     writeString(formatInt(creds), 3, 39, getColorPairIm(creds));
     writeString(formatInt(skulls), 4, 39, getColorPairIm(skulls));
     writeString(formatInt(tps), 5, 39, getColorPairIm(tps));
+    writeString(formatInt(shards), 6, 39, getColorPairIm(shards));
 
     // Resources
-    writeString(formatInt(crew), 7, 39, getColorPairIm(crew));
-    writeString(formatInt(orgs), 8, 39, getColorPairIm(orgs));
-    writeString(formatInt(gas), 9, 39, getColorPairIm(gas));
-    writeString(formatInt(metals), 10, 39, getColorPairIm(metals));
-    writeString(formatInt(radio), 11, 39, getColorPairIm(radio));
-    writeString(formatInt(dm), 12, 39, getColorPairIm(dm));
+    writeString(formatInt(crew), 8, 39, getColorPairIm(crew));
+    writeString(formatInt(orgs), 9, 39, getColorPairIm(orgs));
+    writeString(formatInt(gas), 10, 39, getColorPairIm(gas));
+    writeString(formatInt(metals), 11, 39, getColorPairIm(metals));
+    writeString(formatInt(radio), 12, 39, getColorPairIm(radio));
+    writeString(formatInt(dm), 13, 39, getColorPairIm(dm));
 
     // Relics
-    writeString(formatInt(humans), 14, 39, getColorPair(humans));
-    writeString(formatInt(wyrds), 15, 39, getColorPair(wyrds));
-    writeString(formatInt(hets), 16, 39, getColorPair(hets));
-    writeString(formatInt(precursors), 17, 39, getColorPair(precursors));
+    writeString(formatInt(humans), 15, 39, getColorPair(humans));
+    writeString(formatInt(wyrds), 16, 39, getColorPair(wyrds));
+    writeString(formatInt(hets), 17, 39, getColorPair(hets));
+    writeString(formatInt(precursors), 18, 39, getColorPair(precursors));
 
     // CREDITS
     writeString("       Credits       ", 1, 54, 4);
@@ -251,50 +260,55 @@ void drawUI(const GameData* gameData, const Timer* timer, const Currencies* star
     writeString(formatInt(creds * CREDITS_VALUE), 3, 60, getColorPair(creds));
     writeString(formatInt(skulls * SKULLS_VALUE), 4, 60, getColorPair(skulls));
     writeString(formatInt(tps * TP_VALUE), 5, 60, getColorPair(tps));
+    writeString(formatInt(shards * SHARDS_VALUE), 6, 60, getColorPair(shards));
 
     // Resources
-    writeString(formatInt(crew * CREW_VALUE), 7, 60, getColorPair(crew));
-    writeString(formatInt(orgs * ORGANIC_VALUE), 8, 60, getColorPair(orgs));
-    writeString(formatInt(gas * GAS_VALUE), 9, 60, getColorPair(gas));
-    writeString(formatInt(metals * METAL_VALUE), 10, 60, getColorPair(metals));
-    writeString(formatInt(radio * RADIOACTIVE_VALUE), 11, 60, getColorPair(radio));
-    writeString(formatInt(dm * DARKMATTER_VALUE), 12, 60, getColorPair(dm));
+    writeString(formatInt(crew * CREW_VALUE), 8, 60, getColorPair(crew));
+    writeString(formatInt(orgs * ORGANIC_VALUE), 9, 60, getColorPair(orgs));
+    writeString(formatInt(gas * GAS_VALUE), 10, 60, getColorPair(gas));
+    writeString(formatInt(metals * METAL_VALUE), 11, 60, getColorPair(metals));
+    writeString(formatInt(radio * RADIOACTIVE_VALUE), 12, 60, getColorPair(radio));
+    writeString(formatInt(dm * DARKMATTER_VALUE), 13, 60, getColorPair(dm));
 
     // Relics
-    writeString(formatInt(humans * HUMAN_VALUE), 14, 60, getColorPair(humans));
-    writeString(formatInt(wyrds * WYRD_VALUE), 15, 60, getColorPair(wyrds));
-    writeString(formatInt(hets * HETS_VALUE), 16, 60, getColorPair(hets));
-    writeString(formatInt(precursors * PREC_VALUE), 17, 60, getColorPair(precursors));
+    writeString(formatInt(humans * HUMAN_VALUE), 15, 60, getColorPair(humans));
+    writeString(formatInt(wyrds * WYRD_VALUE), 16, 60, getColorPair(wyrds));
+    writeString(formatInt(hets * HET_VALUE), 17, 60, getColorPair(hets));
+    writeString(formatInt(precursors * PREC_VALUE), 18, 60, getColorPair(precursors));
 
     // Total
-    writeString("Total:", 19, 50, 0);
-    writeString(formatInt(total), 19, 60, getColorPair(total));
+    writeString("Total:", 20, 50, 0);
+    writeString(formatInt(total), 20, 60, getColorPair(total));
 
     // Creds per hour
-    writeString("Creds/h:", 20, 50, 0);
-    writeString(formatInt(credsPerHour), 20, 60, getColorPair(total));
+    writeString("Creds/h:", 21, 50, 0);
+    writeString(formatInt(credsPerHour), 21, 60, getColorPair(total));
 
     // XP
-    writeString("Player Level:", 19, 2, 0);
-    writeString(formatFloat(playerLevel, 7), 19, 18, 0);
+    writeString("Player Level:", 20, 2, 0);
+    writeString(formatFloat(playerLevel, 7), 20, 18, 0);
 
-    writeString("Leveled:", 20, 2, 0);
-    writeString(formatFloat(levelDelta, 7), 20, 18, 0);
+    writeString("Leveled:", 21, 2, 0);
+    writeString(formatFloat(levelDelta, 7), 21, 18, 0);
 
-    writeString("Time to level:", 21, 2, 0);
+    writeString("Time to level:", 22, 2, 0);
     snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d:%02d", secondsToLevelUp / 3600, (secondsToLevelUp % 3600) / 60, secondsToLevelUp % 60);
-    writeString(timeBuffer, 21, 22, 6);
+    writeString(timeBuffer, 22, 22, 6);
 
-    writeString("Exp/h:", 22, 2, 0);
-    writeString(formatInt(expPerHour), 22, 18, 6);
+    writeString("Exp/h:", 23, 2, 0);
+    writeString(formatInt(expPerHour), 23, 18, 6);
+
+    // TOTAL
+    writeString("Total account value:", 25, 2, 0);
+    writeString(formatInt(totalValue), 25, 24, 2);
 
     // END
-    writeString("Elapsed:", 24, 53, 0);
+    writeString("Elapsed:", 26, 53, 0);
     snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d:%02d", timer->elapsedSeconds / 3600, (timer->elapsedSeconds % 3600) / 60, timer->elapsedSeconds % 60);
-    writeString(timeBuffer, 24, 64, 1);
+    writeString(timeBuffer, 26, 64, 1);
 
-    writeString("Press P to pause/resume the timer", 24, 2, 0);
-    writeString("Press 'Q' to exit", 25, 2, 3);
+    writeString("Press P to pause/resume the timer", 26, 2, 0);
+    writeString("Press 'Q' to exit", 27, 2, 3);
 
     refresh();
 }

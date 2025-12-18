@@ -8,7 +8,8 @@ typedef struct {
     HWND hGameWindow;
     DWORD pID;
     HANDLE processHandle;
-    char* moduleName;
+    char* monoModuleName;
+    char* unityModuleName;
 } GameData;
 
 HWND getWindow();

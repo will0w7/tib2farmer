@@ -7,6 +7,7 @@ typedef struct {
     int credits;
     int skulls;
     int techPoints;
+    int starShards;
 } Currencies;
 
 typedef struct {

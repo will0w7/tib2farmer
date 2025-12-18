@@ -3,7 +3,8 @@
 #include <string.h>
 
 #define GAME_NAME "TheInfiniteBlack2"
-#define MODULE_NAME "UnityPlayer.dll"
+#define UNITY_MODULE_NAME "UnityPlayer.dll"
+#define MONO_MODULE_NAME "mono-2.0-bdwgc.dll"
 
 HWND getWindow() {
     HWND hGameWindow = FindWindow(NULL, GAME_NAME);
@@ -32,13 +33,21 @@ HANDLE getHandle(DWORD pID) {
 }
 
 bool initGameData(GameData* gameData) {
-    int len = strlen(MODULE_NAME) + 1;
-    gameData->moduleName = (char*)malloc(len);
-    if (gameData->moduleName == NULL) {
-        printError("Memory allocation failed for moduleName");
+    int len = strlen(MONO_MODULE_NAME) + 1;
+    gameData->monoModuleName = (char*)malloc(len);
+    if (gameData->monoModuleName == NULL) {
+        printError("Memory allocation failed for MONO_MODULE_NAME");
         return false;
     }
-    strcpy_s(gameData->moduleName, len, MODULE_NAME);
+    strcpy_s(gameData->monoModuleName, len, MONO_MODULE_NAME);
+
+    len = strlen(UNITY_MODULE_NAME) + 1;
+    gameData->unityModuleName = (char*)malloc(len);
+    if (gameData->unityModuleName == NULL) {
+        printError("Memory allocation failed for UNITY_MODULE_NAME");
+        return false;
+    }
+    strcpy_s(gameData->unityModuleName, len, UNITY_MODULE_NAME);
 
     gameData->hGameWindow = getWindow();
     if (gameData->hGameWindow == NULL) {

@@ -7,12 +7,12 @@
 
 Currencies getCurrencies(const GameData* gameData) {
     Currencies currencies = {0};
-    const uintptr_t gameBaseAddress = getModuleBaseAddress(gameData->moduleName, gameData->pID);
+    const uintptr_t gameBaseAddress = getModuleBaseAddress(gameData->monoModuleName, gameData->pID);
     if (gameBaseAddress == 0)
         return currencies;
 
-    const uintptr_t offsetGameToBaseAddress = 0x01CA6330;
-    const uintptr_t pointsOffsets[] = {0x160, 0x8, 0x70, 0x0, 0x28, 0xF0, 0x20, 0x100};
+    const uintptr_t offsetGameToBaseAddress = 0x0073A0F8;
+    const uintptr_t pointsOffsets[] = {0x190, 0xDD8, 0x18, 0x20, 0x38, 0x100, 0x20, 0x100};
 
     uintptr_t baseAddress = 0;
     if (!readMemory(gameBaseAddress + offsetGameToBaseAddress, &baseAddress, sizeof(baseAddress), gameData->processHandle))
@@ -31,18 +31,19 @@ Currencies getCurrencies(const GameData* gameData) {
     currencies.credits += OBF_MAGIC_NUMBER;
     currencies.skulls += OBF_MAGIC_NUMBER;
     currencies.techPoints += OBF_MAGIC_NUMBER;
+    currencies.starShards += OBF_MAGIC_NUMBER;
     return currencies;
 }
 
 Resources getResources(const GameData* gameData) {
     Resources resources = {0};
-    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(gameData->moduleName), gameData->pID);
+    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(gameData->monoModuleName), gameData->pID);
     if (gameBaseAddress == 0) {
         return resources;
     }
 
-    const uintptr_t offsetGameToBaseAddress = 0x01C95608;
-    const uintptr_t pointsOffsets[] = {0xD0, 0x8, 0x80, 0x70, 0x78, 0xF0, 0x20, 0x80, 0x18};
+    const uintptr_t offsetGameToBaseAddress = 0x0073A0F8;
+    const uintptr_t pointsOffsets[] = {0x190, 0xDD8, 0x18, 0x20, 0x38, 0x100, 0x20, 0x80, 0x18};
 
     uintptr_t baseAddress = 0;
     if (!readMemory(gameBaseAddress + offsetGameToBaseAddress, &baseAddress, sizeof(baseAddress), gameData->processHandle)) {
@@ -65,13 +66,13 @@ Resources getResources(const GameData* gameData) {
 
 Relics getRelics(const GameData* gameData) {
     Relics relics = {0};
-    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(gameData->moduleName), gameData->pID);
+    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(gameData->monoModuleName), gameData->pID);
     if (gameBaseAddress == 0) {
         return relics;
     }
 
-    const uintptr_t offsetGameToBaseAddress = 0x01CA6330;
-    const uintptr_t pointsOffsets[] = {0x160, 0x8, 0x70, 0x0, 0x28, 0xF0, 0x20, 0x11C};
+    const uintptr_t offsetGameToBaseAddress = 0x0073A0F8;
+    const uintptr_t pointsOffsets[] = {0x190, 0xDD8, 0x18, 0x20, 0x38, 0x100, 0x20, 0x120};
 
     uintptr_t baseAddress = 0;
     if (!readMemory(gameBaseAddress + offsetGameToBaseAddress, &baseAddress, sizeof(baseAddress), gameData->processHandle)) {
@@ -94,13 +95,13 @@ Relics getRelics(const GameData* gameData) {
 
 float getPlayerLevel(const GameData* gameData) {
     float playerLevel = 0.0f;
-    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(gameData->moduleName), gameData->pID);
+    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(gameData->unityModuleName), gameData->pID);
     if (gameBaseAddress == 0) {
         return playerLevel;
     }
 
-    const uintptr_t offsetGameToBaseAddress = 0x01C95608;
-    const uintptr_t pointsOffsets[] = {0xD0, 0x8, 0x80, 0x70, 0x78, 0x80, 0x28};
+    const uintptr_t offsetGameToBaseAddress = 0x01F2F988;
+    const uintptr_t pointsOffsets[] = {0x90, 0x30, 0x50, 0x0, 0x120, 0x198, 0x80, 0x28};
 
     uintptr_t baseAddress = 0;
     if (!readMemory(gameBaseAddress + offsetGameToBaseAddress, &baseAddress, sizeof(baseAddress), gameData->processHandle)) {
@@ -108,12 +109,12 @@ float getPlayerLevel(const GameData* gameData) {
     }
 
     uintptr_t levelAddress = baseAddress;
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 7; i++) {
         if (!readMemory(levelAddress + pointsOffsets[i], &levelAddress, sizeof(levelAddress), gameData->processHandle)) {
             return playerLevel;
         }
     }
-    levelAddress += pointsOffsets[6];
+    levelAddress += pointsOffsets[7];
 
     if (!readMemory(levelAddress, &playerLevel, sizeof(playerLevel), gameData->processHandle)) {
         return playerLevel;
@@ -123,13 +124,13 @@ float getPlayerLevel(const GameData* gameData) {
 
 int getPlayerExp(const GameData* gameData) {
     int playerExp = 0;
-    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(gameData->moduleName), gameData->pID);
+    const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(gameData->monoModuleName), gameData->pID);
     if (gameBaseAddress == 0) {
         return playerExp;
     }
 
-    const uintptr_t offsetGameToBaseAddress = 0x01CA6330;
-    const uintptr_t pointsOffsets[] = {0x160, 0x8, 0x70, 0x0, 0x28, 0x30, 0x108};
+    const uintptr_t offsetGameToBaseAddress = 0x0073A0F8;
+    const uintptr_t pointsOffsets[] = {0x190, 0xDD8, 0x18, 0x20, 0x38, 0x30, 0x140};
 
     uintptr_t baseAddress = 0;
     if (!readMemory(gameBaseAddress + offsetGameToBaseAddress, &baseAddress, sizeof(baseAddress), gameData->processHandle)) {
