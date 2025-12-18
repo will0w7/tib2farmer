@@ -2,6 +2,8 @@
 
 TIB2Farmer is a simple, open-source terminal application for Windows that automatically tracks resources in the game [**The Infinite Black 2**]. It's designed to be lightweight and easy to use.
 
+![Screenshot of the app.](images/example_image.png)
+
 **Note:** This project is currently in *alpha*. It may have bugs and is subject to change.
 
 ## Features
