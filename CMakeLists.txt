@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(tib2farmer VERSION 0.2.2 LANGUAGES C)
+project(tib2farmer VERSION 0.3.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 23)
 
