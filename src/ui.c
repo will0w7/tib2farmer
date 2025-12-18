@@ -9,7 +9,7 @@
 #include "../include/curses.h"
 
 #define CREDITS_VALUE 1
-#define SKULLS_VALUE 750
+#define SKULLS_VALUE 700
 #define TP_VALUE 1000
 
 #define CREW_VALUE 100 / 100
@@ -19,10 +19,10 @@
 #define RADIOACTIVE_VALUE 1600 / 100
 #define DARKMATTER_VALUE 2000 / 100
 
-#define HUMAN_VALUE 5000
+#define HUMAN_VALUE 2000
 #define WYRD_VALUE 1500
 #define HETS_VALUE 1500
-#define PREC_VALUE 5000
+#define PREC_VALUE 2000
 
 void writeString(const char* string, int y, int x, int pair) {
     attron(COLOR_PAIR(pair));
