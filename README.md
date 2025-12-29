@@ -1,6 +1,6 @@
 # TIB2Farmer
 
-TIB2Farmer is a simple, open-source terminal application for Windows that automatically tracks resources in the game [**The Infinite Black 2**]. It's designed to be lightweight and easy to use.
+TIB2Farmer is a simple, open-source terminal application for Windows that automatically tracks resources in the game **The Infinite Black 2**. It's designed to be lightweight and easy to use.
 
 ![Screenshot of the app.](images/example_image.png)
 
@@ -8,7 +8,7 @@ TIB2Farmer is a simple, open-source terminal application for Windows that automa
 
 ## Features
 
-*   Automatic resource tracking in [**The Infinite Black 2**].
+*   Automatic resource tracking in **The Infinite Black 2**.
 *   Simple, terminal-based interface.
 *   Attempts to resume tracking after disconnections.
 
@@ -20,8 +20,8 @@ TIB2Farmer is a simple, open-source terminal application for Windows that automa
 
 ## Usage
 
-1.  **Normal Mode:** Open [**The Infinite Black 2**] and log in. Then, launch TIB2Farmer. The resource counter will start automatically.
-2.  **Secret Mode:** Launch TIB2Farmer *before* opening [**The Infinite Black 2**]. This will display the current values of all your coins and resources. It's not a feature itself, but can be useful.
+1.  **Normal Mode:** Open **The Infinite Black 2** and log in. Then, launch TIB2Farmer. The resource counter will start automatically.
+2.  **Secret Mode:** Launch TIB2Farmer *before* opening **The Infinite Black 2**. This will display the current values of all your coins and resources. It's not a feature itself, but can be useful.
 
 **Important Notes:**
 
