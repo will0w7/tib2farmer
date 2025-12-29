@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0] - 2025-12-18
+## [0.4.0] - 2025-12-29
 
 In this version, pdcursesmod has been updated to the latest version and a couple of bugs have been fixed, mainly an incorrect memory pointer at the player level (with the new engine, all game state data is now located in the mono module instead of the unity module).
 
