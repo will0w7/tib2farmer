@@ -29,7 +29,7 @@ typedef struct {
 void getCurrencies(const GameData* gameData, Currencies* currencies);
 void getResources(const GameData* gameData, Resources* resources);
 void getRelics(const GameData* gameData, Relics* relics);
-float getPlayerLevel(const GameData* gameData, float playerLevel);
-int getPlayerExp(const GameData* gameData, int playerExp);
+void getPlayerLevel(const GameData* gameData, float* playerLevel);
+void getPlayerExp(const GameData* gameData, int* playerExp);
 
 #endif

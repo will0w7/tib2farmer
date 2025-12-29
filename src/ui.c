@@ -25,6 +25,9 @@
 #define HET_VALUE 1500
 #define PREC_VALUE 2000
 
+#define PAUSED "PAUSED"
+#define RUNNING "RUNNING"
+
 void writeString(const char* string, int y, int x, int pair) {
     attron(COLOR_PAIR(pair));
     mvprintw(y, x, string);
@@ -280,6 +283,9 @@ void drawUI(const Timer* timer, const Currencies* startCurrencies, const Resourc
     writeString("Creds/h:", 21, 50, 0);
     writeString(formatInt(credsPerHour), 21, 60, getColorPair(total));
 
+    // Running indicator
+    writeString(timer->paused ? PAUSED : RUNNING, 24, 59, getColorPair(timer->paused ? -1 : 1));
+
     // XP
     writeString("Player Level:", 20, 2, 0);
     writeString(formatFloat(playerLevel, 7), 20, 18, 0);
@@ -304,7 +310,8 @@ void drawUI(const Timer* timer, const Currencies* startCurrencies, const Resourc
     writeString(timeBuffer, 26, 64, 1);
 
     writeString("Press P to pause/resume the timer", 26, 2, 0);
-    writeString("Press 'Q' to exit", 27, 2, 3);
+    writeString("Press R to reset all", 27, 2, 0);
+    writeString("Press 'Q' to exit", 28, 2, 3);
 
     refresh();
 }

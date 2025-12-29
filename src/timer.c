@@ -2,8 +2,8 @@
 
 void initTimer(Timer* timer) {
     timer->startTime = time(NULL);
-    timer->pauseStartTime = 0;
-    timer->paused = false;
+    timer->pauseStartTime = time(NULL);
+    timer->paused = true;
     timer->elapsedSeconds = 0;
 }
 

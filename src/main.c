@@ -8,6 +8,21 @@
 #include "pdc_config.h" // IWYU pragma: keep
 #include "../include/curses.h"
 
+static void initAllData(const GameData* gameData, Currencies* startCurrencies, Resources* startResources, Relics* startRelics, float* startPlayerLevel, int* startPlayerExp,
+                        Currencies* currencies, Resources* resources, Relics* relics, float* playerLevel, int* playerExp) {
+    getCurrencies(gameData, startCurrencies);
+    getResources(gameData, startResources);
+    getRelics(gameData, startRelics);
+    getPlayerLevel(gameData, startPlayerLevel);
+    getPlayerExp(gameData, startPlayerExp);
+
+    getCurrencies(gameData, currencies);
+    getResources(gameData, resources);
+    getRelics(gameData, relics);
+    getPlayerLevel(gameData, playerLevel);
+    getPlayerExp(gameData, playerExp);
+}
+
 int main() {
     setlocale(LC_ALL, "");
     initscr();
@@ -50,11 +65,8 @@ int main() {
         if (!gameAttached) {
             if (initGameData(&gameData)) {
                 initTimer(&timer);
-                getCurrencies(&gameData, &startCurrencies);
-                getResources(&gameData, &startResources);
-                getRelics(&gameData, &startRelics);
-                startPlayerLevel = getPlayerLevel(&gameData, startPlayerLevel);
-                startPlayerExp = getPlayerExp(&gameData, startPlayerExp);
+                initAllData(&gameData, &startCurrencies, &startResources, &startRelics, &startPlayerLevel, &startPlayerExp, &currencies, &resources, &relics, &playerLevel,
+                            &playerExp);
                 gameAttached = true;
             } else {
                 erase();
@@ -82,6 +94,10 @@ int main() {
                 case 'p':
                     togglePauseTimer(&timer);
                     break;
+                case 'r':
+                    initTimer(&timer);
+                    initAllData(&gameData, &startCurrencies, &startResources, &startRelics, &startPlayerLevel, &startPlayerExp, &currencies, &resources, &relics, &playerLevel,
+                                &playerExp);
                 }
             }
 
@@ -90,8 +106,8 @@ int main() {
             getCurrencies(&gameData, &currencies);
             getResources(&gameData, &resources);
             getRelics(&gameData, &relics);
-            playerLevel = getPlayerLevel(&gameData, playerLevel);
-            playerExp = getPlayerExp(&gameData, playerExp);
+            getPlayerLevel(&gameData, &playerLevel);
+            getPlayerExp(&gameData, &playerExp);
             drawUI(&timer, &startCurrencies, &startResources, &startRelics, startPlayerLevel, startPlayerExp, &currencies, &resources, &relics, playerLevel, playerExp);
 
             if (!IsWindow(gameData.hGameWindow)) {

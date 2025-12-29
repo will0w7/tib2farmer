@@ -91,10 +91,10 @@ void getRelics(const GameData* gameData, Relics* relics) {
     return;
 }
 
-float getPlayerLevel(const GameData* gameData, float playerLevel) {
+void getPlayerLevel(const GameData* gameData, float* playerLevel) {
     const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(MONO_MODULE_NAME), gameData->pID);
     if (gameBaseAddress == 0) {
-        return playerLevel;
+        return;
     }
 
     const uintptr_t offsetGameToBaseAddress = 0x0073A0F8;
@@ -102,27 +102,27 @@ float getPlayerLevel(const GameData* gameData, float playerLevel) {
 
     uintptr_t baseAddress = 0;
     if (!readMemory(gameBaseAddress + offsetGameToBaseAddress, &baseAddress, sizeof(baseAddress), gameData->processHandle)) {
-        return playerLevel;
+        return;
     }
 
     uintptr_t levelAddress = baseAddress;
     for (int i = 0; i < 6; i++) {
         if (!readMemory(levelAddress + pointsOffsets[i], &levelAddress, sizeof(levelAddress), gameData->processHandle)) {
-            return playerLevel;
+            return;
         }
     }
     levelAddress += pointsOffsets[6];
 
-    if (!readMemory(levelAddress, &playerLevel, sizeof(playerLevel), gameData->processHandle)) {
-        return playerLevel;
+    if (!readMemory(levelAddress, playerLevel, sizeof(*playerLevel), gameData->processHandle)) {
+        return;
     }
-    return playerLevel;
+    return;
 }
 
-int getPlayerExp(const GameData* gameData, int playerExp) {
+void getPlayerExp(const GameData* gameData, int* playerExp) {
     const uintptr_t gameBaseAddress = getModuleBaseAddress(_T(MONO_MODULE_NAME), gameData->pID);
     if (gameBaseAddress == 0) {
-        return playerExp;
+        return;
     }
 
     const uintptr_t offsetGameToBaseAddress = 0x0073A0F8;
@@ -130,19 +130,20 @@ int getPlayerExp(const GameData* gameData, int playerExp) {
 
     uintptr_t baseAddress = 0;
     if (!readMemory(gameBaseAddress + offsetGameToBaseAddress, &baseAddress, sizeof(baseAddress), gameData->processHandle)) {
-        return playerExp;
+        return;
     }
 
     uintptr_t levelAddress = baseAddress;
     for (int i = 0; i < 6; i++) {
         if (!readMemory(levelAddress + pointsOffsets[i], &levelAddress, sizeof(levelAddress), gameData->processHandle)) {
-            return playerExp;
+            return;
         }
     }
     levelAddress += pointsOffsets[6];
 
-    if (!readMemory(levelAddress, &playerExp, sizeof(playerExp), gameData->processHandle)) {
-        return playerExp;
+    if (!readMemory(levelAddress, playerExp, sizeof(*playerExp), gameData->processHandle)) {
+        return;
     }
-    return playerExp + OBF_MAGIC_NUMBER;
+    *playerExp += OBF_MAGIC_NUMBER;
+    return;
 }

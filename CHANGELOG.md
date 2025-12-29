@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 In this version, pdcursesmod has been updated to the latest version and a couple of bugs have been fixed, mainly an incorrect memory pointer at the player level (with the new engine, all game state data is now located in the mono module instead of the unity module).
 
+New indicator to see if the app is running or paused.
+
 Malloc has been removed and the application is being refactored (in progress).
+
+Now the timer starts **paused**, so you need to press P to start the it when running the app.
+
+There is a new hotkey, **R**, that let's you reset all data, including the timer. After pressing it the timer will be paused, you need to press **P** to start the app again (if it was running).
 
 ### Fixed
 
