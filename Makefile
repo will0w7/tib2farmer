@@ -21,7 +21,7 @@ config:
 	)
 	$(CMAKE) -B "$(BUILD_DIR)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 
-build: config
+build: clean config
 	$(CMAKE) --build "$(BUILD_DIR)"
 
 clean:
