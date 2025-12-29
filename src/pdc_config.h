@@ -1,5 +1,5 @@
 /*
-    This header is need to avoid conflict between MOUSE_MOVED from Windows.h and MOUSE_MOVED from curses.h
+    This header is needed to avoid conflict between MOUSE_MOVED from Windows.h and MOUSE_MOVED from curses.h
     At the same time, configures curses.h to use wide characteres and UTF-8
     It must be included after Windows.h and before curses.h
 */

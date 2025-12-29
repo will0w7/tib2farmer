@@ -143,38 +143,34 @@ char* formatFloat(float num, int precision) {
     return formattedNum;
 }
 
-void drawUI(const GameData* gameData, const Timer* timer, const Currencies* startCurrencies, const Resources* startResources, const Relics* startRelics, float startPlayerLevel,
-            int startPlayerExp) {
+void drawUI(const Timer* timer, const Currencies* startCurrencies, const Resources* startResources, const Relics* startRelics, const float startPlayerLevel,
+            const int startPlayerExp, const Currencies* currencies, const Resources* resources, const Relics* relics, const float playerLevel, const int playerExp) {
     char timeBuffer[9];
-    Currencies currencies = getCurrencies(gameData);
-    Resources resources = getResources(gameData);
-    Relics relics = getRelics(gameData);
-    float playerLevel = getPlayerLevel(gameData);
-    int playerExp = getPlayerExp(gameData);
 
-    const int creds = currencies.credits - startCurrencies->credits;
-    const int skulls = currencies.skulls - startCurrencies->skulls;
-    const int tps = currencies.techPoints - startCurrencies->techPoints;
-    const int shards = currencies.starShards - startCurrencies->starShards;
+    const int creds = currencies->credits - startCurrencies->credits;
+    const int skulls = currencies->skulls - startCurrencies->skulls;
+    const int tps = currencies->techPoints - startCurrencies->techPoints;
+    const int shards = currencies->starShards - startCurrencies->starShards;
 
-    const int crew = resources.crew - startResources->crew;
-    const int orgs = resources.organics - startResources->organics;
-    const int gas = resources.gas - startResources->gas;
-    const int metals = resources.metals - startResources->metals;
-    const int radio = resources.radioactives - startResources->radioactives;
-    const int dm = resources.darkmatter - startResources->darkmatter;
+    const int crew = resources->crew - startResources->crew;
+    const int orgs = resources->organics - startResources->organics;
+    const int gas = resources->gas - startResources->gas;
+    const int metals = resources->metals - startResources->metals;
+    const int radio = resources->radioactives - startResources->radioactives;
+    const int dm = resources->darkmatter - startResources->darkmatter;
 
-    const int humans = relics.humans - startRelics->humans;
-    const int wyrds = relics.wyrds - startRelics->wyrds;
-    const int hets = relics.hets - startRelics->hets;
-    const int precursors = relics.precursors - startRelics->precursors;
+    const int humans = relics->humans - startRelics->humans;
+    const int wyrds = relics->wyrds - startRelics->wyrds;
+    const int hets = relics->hets - startRelics->hets;
+    const int precursors = relics->precursors - startRelics->precursors;
 
     const int total = creds * CREDITS_VALUE + skulls * SKULLS_VALUE + tps * TP_VALUE + shards * SHARDS_VALUE + crew * CREW_VALUE + orgs * ORGANIC_VALUE + gas * GAS_VALUE +
         metals * METAL_VALUE + radio * RADIOACTIVE_VALUE + dm * DARKMATTER_VALUE + humans * HUMAN_VALUE + wyrds * WYRD_VALUE + hets * HET_VALUE + precursors * PREC_VALUE;
 
-    const int totalValue = currencies.credits * CREDITS_VALUE + currencies.skulls * SKULLS_VALUE + currencies.techPoints * TP_VALUE + currencies.starShards * SHARDS_VALUE +
-        resources.crew * CREW_VALUE + resources.organics * ORGANIC_VALUE + resources.gas * GAS_VALUE + resources.metals * METAL_VALUE + resources.radioactives * RADIOACTIVE_VALUE +
-        resources.darkmatter * DARKMATTER_VALUE + relics.humans * HUMAN_VALUE + relics.wyrds * WYRD_VALUE + relics.hets * HET_VALUE + relics.precursors * PREC_VALUE;
+    const int totalValue = currencies->credits * CREDITS_VALUE + currencies->skulls * SKULLS_VALUE + currencies->techPoints * TP_VALUE + currencies->starShards * SHARDS_VALUE +
+        resources->crew * CREW_VALUE + resources->organics * ORGANIC_VALUE + resources->gas * GAS_VALUE + resources->metals * METAL_VALUE +
+        resources->radioactives * RADIOACTIVE_VALUE + resources->darkmatter * DARKMATTER_VALUE + relics->humans * HUMAN_VALUE + relics->wyrds * WYRD_VALUE +
+        relics->hets * HET_VALUE + relics->precursors * PREC_VALUE;
 
     const float levelDelta = playerLevel - startPlayerLevel;
     const float expRate = levelDelta / timer->elapsedSeconds;
@@ -311,4 +307,23 @@ void drawUI(const GameData* gameData, const Timer* timer, const Currencies* star
     writeString("Press 'Q' to exit", 27, 2, 3);
 
     refresh();
+}
+
+void eraseErrors() {
+    writeString("                            ", 12, 25, 0);
+    writeString("                            ", 13, 25, 0);
+    writeString("                            ", 14, 25, 0);
+}
+
+void printErrors(GameData* gameData) {
+    writeString("   CANNOT READ GAME STATE   ", 12, 25, 5);
+    writeString("  LAUNCH THE GAME TO ATTACH  ", 13, 25, 5);
+    if (gameData->hGameWindow == NULL)
+        writeString("  UNABLE TO LOCATE WINDOW  ", 14, 25, 5);
+    else if (gameData->pID == 0)
+        writeString("    UNABLE TO GET PID     ", 14, 25, 5);
+    else if (gameData->processHandle == NULL)
+        writeString("   UNABLE TO GET HANDLE    ", 14, 25, 5);
+
+    writeString("Press 'Q' to exit", 23, 2, 0);
 }

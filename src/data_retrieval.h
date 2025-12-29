@@ -26,10 +26,10 @@ typedef struct {
     int precursors;
 } Relics;
 
-Currencies getCurrencies(const GameData* gameData);
-Resources getResources(const GameData* gameData);
-Relics getRelics(const GameData* gameData);
-float getPlayerLevel(const GameData* gameData);
-int getPlayerExp(const GameData* gameData);
+void getCurrencies(const GameData* gameData, Currencies* currencies);
+void getResources(const GameData* gameData, Resources* resources);
+void getRelics(const GameData* gameData, Relics* relics);
+float getPlayerLevel(const GameData* gameData, float playerLevel);
+int getPlayerExp(const GameData* gameData, int playerExp);
 
 #endif

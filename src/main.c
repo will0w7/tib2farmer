@@ -29,13 +29,20 @@ int main() {
     init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(8, COLOR_RED, COLOR_WHITE);
 
-    GameData gameData = {NULL, 0, NULL, NULL, NULL};
+    GameData gameData = {NULL, 0, NULL};
     Timer timer;
-    Currencies startCurrencies;
-    Resources startResources;
-    Relics startRelics;
-    float startPlayerLevel;
-    int startPlayerExp;
+    Currencies startCurrencies = {0};
+    Resources startResources = {0};
+    Relics startRelics = {0};
+    float startPlayerLevel = 0.0f;
+    int startPlayerExp = 0;
+
+    Currencies currencies = {0};
+    Resources resources = {0};
+    Relics relics = {0};
+    float playerLevel = 0.0f;
+    int playerExp = 0;
+
     bool running = true;
     bool gameAttached = false;
 
@@ -43,37 +50,26 @@ int main() {
         if (!gameAttached) {
             if (initGameData(&gameData)) {
                 initTimer(&timer);
-                startCurrencies = getCurrencies(&gameData);
-                startResources = getResources(&gameData);
-                startRelics = getRelics(&gameData);
-                startPlayerLevel = getPlayerLevel(&gameData);
-                startPlayerExp = getPlayerExp(&gameData);
+                getCurrencies(&gameData, &startCurrencies);
+                getResources(&gameData, &startResources);
+                getRelics(&gameData, &startRelics);
+                startPlayerLevel = getPlayerLevel(&gameData, startPlayerLevel);
+                startPlayerExp = getPlayerExp(&gameData, startPlayerExp);
                 gameAttached = true;
             } else {
                 erase();
-                writeString("   CANNOT READ GAME STATE   ", 12, 25, 5);
-                writeString("  LAUNCH THE GAME TO ATTACH  ", 13, 25, 5);
-                if (gameData.hGameWindow == NULL)
-                    writeString("  UNABLE TO LOCATE WINDOW  ", 14, 25, 5);
-                else if (gameData.pID == 0)
-                    writeString("    UNABLE TO GET PID     ", 14, 25, 5);
-                else if (gameData.processHandle == NULL)
-                    writeString("   UNABLE TO GET HANDLE    ", 14, 25, 5);
-
-                writeString("Press 'Q' to exit", 23, 2, 0);
+                printErrors(&gameData);
                 refresh();
                 int input = getch();
                 if (input == 'q') {
                     running = false;
                 }
-                napms(500);
+                napms(1000);
                 continue;
             }
         } else {
             erase();
-            writeString("                            ", 12, 25, 0);
-            writeString("                            ", 13, 25, 0);
-            writeString("                            ", 14, 25, 0);
+            eraseErrors();
         }
 
         while (gameAttached && running) {
@@ -91,7 +87,12 @@ int main() {
 
             erase();
             updateTimer(&timer);
-            drawUI(&gameData, &timer, &startCurrencies, &startResources, &startRelics, startPlayerLevel, startPlayerExp);
+            getCurrencies(&gameData, &currencies);
+            getResources(&gameData, &resources);
+            getRelics(&gameData, &relics);
+            playerLevel = getPlayerLevel(&gameData, playerLevel);
+            playerExp = getPlayerExp(&gameData, playerExp);
+            drawUI(&timer, &startCurrencies, &startResources, &startRelics, startPlayerLevel, startPlayerExp, &currencies, &resources, &relics, playerLevel, playerExp);
 
             if (!IsWindow(gameData.hGameWindow)) {
                 printError("Lost Game Window");
@@ -104,11 +105,5 @@ int main() {
     }
 
     endwin();
-    if (gameData.monoModuleName != NULL) {
-        free(gameData.monoModuleName);
-    }
-    if (gameData.unityModuleName != NULL) {
-        free(gameData.unityModuleName);
-    }
     return EXIT_SUCCESS;
 }
