@@ -10,26 +10,28 @@
 
 Define before inclusion (only those needed):
 
-    XCURSES         if building / built for X11
-    PDC_RGB         if you want to use RGB color definitions
-                    (Red = 1, Green = 2, Blue = 4) instead of BGR
-    PDC_WIDE        if building / built with wide-character support
-    PDC_FORCE_UTF8  if forcing use of UTF8 (implies PDC_WIDE)
-    PDC_DLL_BUILD   if building / built as a Windows DLL
-    PDC_NCMOUSE     to use the ncurses mouse API instead
-                    of PDCurses' traditional mouse API
+   Macro          | Meaning / value
+   :--------------|---------------------------------------------------
+   XCURSES        | if building / built for X11
+   PDC_RGB        | RGB color (Red = 1, Green = 2, Blue = 4) vs. BGR
+   PDC_WIDE       | if building / built with wide-character support
+   PDC_FORCE_UTF8 | if forcing use of UTF8 (implies PDC_WIDE)
+   PDC_DLL_BUILD  | if building / built as a Windows DLL
+   PDC_NCMOUSE    | use ncurses mouse API vs. traditional PDCurses*
 
 Defined by this header:
 
-    PDCURSES        PDCurses-only features are available
-    PDC_BUILD       API build version
-    PDC_VER_MAJOR   major version number
-    PDC_VER_MINOR   minor version number
-    PDC_VER_CHANGE  version change number
-    PDC_VER_YEAR    year of version
-    PDC_VER_MONTH   month of version
-    PDC_VER_DAY     day of month of version
-    PDC_VERDOT      version string
+   Macro          | Meaning / value
+   :--------------|---------------------------------------------------
+   PDCURSES       | PDCurses-only features are available
+   PDC_BUILD      | API build version
+   PDC_VER_MAJOR  | major version number
+   PDC_VER_MINOR  | minor version number
+   PDC_VER_CHANGE | version change number
+   PDC_VER_YEAR   | year of version
+   PDC_VER_MONTH  | month of version
+   PDC_VER_DAY    | day of month of version
+   PDC_VERDOT     | version string
 
 **man-end****************************************************************/
 
@@ -39,10 +41,10 @@ Defined by this header:
          /* the 'endwin_*' #defines below should be updated.             */
 #define PDC_VER_MAJOR    4
 #define PDC_VER_MINOR    5
-#define PDC_VER_CHANGE   0
-#define PDC_VER_YEAR   2024
-#define PDC_VER_MONTH    12
-#define PDC_VER_DAY      31
+#define PDC_VER_CHANGE   3
+#define PDC_VER_YEAR   2025
+#define PDC_VER_MONTH     8
+#define PDC_VER_DAY      11
 
 #define PDC_STRINGIZE( x) #x
 #define PDC_stringize( x) PDC_STRINGIZE( x)
@@ -74,6 +76,7 @@ Defined by this header:
 /*----------------------------------------------------------------------*/
 
 #include <stdarg.h>
+#include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
 
@@ -277,13 +280,18 @@ typedef struct
 
 /* With the "traditional" 32-bit mmask_t,  mouse move and triple-clicks
 share the same bit and can't be distinguished.  64-bit mmask_ts allow us
-to make the distinction,  and will allow other events to be added later. */
+to make the distinction,  and will allow other events to be added later.
+
+Note that the BUTTONn_MOVED masks are PDCurses*-specific,  and won't work
+if PDC_NCMOUSE is defined.  For portable code,  use REPORT_MOUSE_POSITION
+to get all mouse movement events,  and keep track of press/release events
+to determine which button(s) are held at a given time.            */
 
 #ifdef PDC_LONG_MMASK
-   #define BUTTON1_MOVED           (mmask_t)0x20      /* PDCurses */
+   #define BUTTON1_MOVED           (mmask_t)0x20  /* PDCurses* only; deprecated */
    #define PDC_BITS_PER_BUTTON     6
 #else
-   #define BUTTON1_MOVED           (mmask_t)0x10      /* PDCurses */
+   #define BUTTON1_MOVED           (mmask_t)0x10  /* PDCurses* only; deprecated */
    #define PDC_BITS_PER_BUTTON     5
 #endif
 
@@ -294,6 +302,7 @@ to make the distinction,  and will allow other events to be added later. */
 #define BUTTON2_CLICKED        PDC_SHIFTED_BUTTON( BUTTON1_CLICKED,        2)
 #define BUTTON2_DOUBLE_CLICKED PDC_SHIFTED_BUTTON( BUTTON1_DOUBLE_CLICKED, 2)
 #define BUTTON2_TRIPLE_CLICKED PDC_SHIFTED_BUTTON( BUTTON1_TRIPLE_CLICKED, 2)
+             /* mouse move events are PDCurses*-only;  deprecated */
 #define BUTTON2_MOVED          PDC_SHIFTED_BUTTON( BUTTON1_MOVED,          2)
 
 #define BUTTON3_RELEASED       PDC_SHIFTED_BUTTON( BUTTON1_RELEASED,       3)
@@ -329,7 +338,14 @@ to make the distinction,  and will allow other events to be added later. */
 #define BUTTON_MODIFIER_ALT     (MOUSE_WHEEL_SCROLL << 3)
 #define REPORT_MOUSE_POSITION   (MOUSE_WHEEL_SCROLL << 4)
 
-#define ALL_MOUSE_EVENTS        (REPORT_MOUSE_POSITION - 1)
+#if defined(PDC_NCMOUSE)      /* ncurses lacks button move and wheel scroll events */
+   #define ALL_BUTTON_MOVE_EVENTS  (BUTTON1_MOVED | BUTTON2_MOVED \
+                  | BUTTON3_MOVED | BUTTON4_MOVED | BUTTON5_MOVED)
+   #define ALL_MOUSE_EVENTS      ((REPORT_MOUSE_POSITION - 1) \
+                  ^ ALL_BUTTON_MOVE_EVENTS ^ MOUSE_WHEEL_SCROLL)
+#else                      /* the 'classic' interface has all events */
+   #define ALL_MOUSE_EVENTS        (REPORT_MOUSE_POSITION - 1)
+#endif
 
 /* ncurses mouse interface */
 
@@ -402,10 +418,10 @@ have bits devoted to character data,  attribute data,  and color pair data.
 There are three configurations supported :
 
 Default, 64-bit chtype,  both wide- and 8-bit character builds:
--------------------------------------------------------------------------------
-|63|62|..|45|44|43|..|38|37|36|35|34|33|..|22|21|20|19|18|17|16|..| 3| 2| 1| 0|
--------------------------------------------------------------------------------
-|  color pair  | unused |        modifiers      |         character eg 'a'
+
+   color pair    | unused |  modifiers      | character eg 'a'
+   --------------|--------|-----------------------|--------------------
+   63 62 .. 45 44|43 .. 39|37 36 35 .. 22 21|20 19 18 .. 3 2 1 0
 
    21 character bits (0-20),  enough for full Unicode coverage
    17 attribute bits (21-37)
@@ -413,19 +429,21 @@ Default, 64-bit chtype,  both wide- and 8-bit character builds:
    20 color pair bits (44-63),  enough for 1048576 color pairs
 
 32-bit chtypes with wide characters (CHTYPE_32 and PDC_WIDE are #defined):
-    +--------------------------------------------------------------------+
-    |31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|..| 2| 1| 0|
-    +--------------------------------------------------------------------+
-          color pair        |     modifiers         |   character eg 'a'
+
+   color pair       | modifiers             | character eg 'a'
+   -----------------|-----------------------|--------------------
+   31 30 29 .. 25 24|23 22 21 20 19 18 17 16|15 14 13 .. 2 1 0
+
    16 character bits (0-16),  enough for BMP (Unicode below 64K)
    8 attribute bits (16-23)
    8 color pair bits (24-31),  for 256 color pairs
 
 32-bit chtypes with narrow characters (CHTYPE_32 #defined,  PDC_WIDE is not):
-    +--------------------------------------------------------------------+
-    |31|30|29|28|..|22|21|20|19|18|17|16|..|12|11|10| 9| 8| 7| 6|..| 1| 0|
-    +--------------------------------------------------------------------+
-          color pair        |     modifiers               |character
+
+   color pair          |     modifiers       |character
+   --------------------|---------------------|----------------
+   31 30 29 .. 22 21 20|19 18 17 16 .. 10 9 8|7 6 5 4 3 2 1
+
    8 character bits (0-7);  only 8-bit charsets will work
    12 attribute bits (8-19)
    12 color pair bits (20-31),  for 4096 pairs
@@ -454,7 +472,11 @@ capability.
     # define PDC_CHARTEXT_BITS   21
     # define PDC_ATTRIBUTE_BITS  17
     # define PDC_UNUSED_BITS      6
-    # define PDC_COLOR_BITS      20
+    #if INT_MAX > 65536
+       # define PDC_COLOR_BITS      20
+    #else
+       # define PDC_COLOR_BITS      13
+    #endif
 # else
 #ifdef PDC_WIDE
             /* 32-bit chtypes,  wide character */
@@ -647,8 +669,9 @@ consider these to be completely non-portable. */
 #define ACS_BSDS      ACS_DS_TTEE
 #define ACS_DSDS      ACS_DS_PLUS
 
-/* PDCurses-only ACS chars.  Don't use if ncurses compatibility matters.
-Some won't work in non-wide X11 builds (see 'acs_defs.h' for details). */
+/* PDCursesMod-only ACS chars.  Don't use if compatibility with any
+other curses implementation matters.  Some won't work in non-wide
+X11 builds (see 'common/acs_defs.h' for details).  Best avoided. */
 
 #define ACS_CENT          PDC_ACS('{')
 #define ACS_YEN           PDC_ACS('|')
@@ -1733,6 +1756,7 @@ PDCEX  int     mouseinterval(int);
 PDCEX  mmask_t mousemask(mmask_t, mmask_t *);
 PDCEX  bool    mouse_trafo(int *, int *, bool);
 PDCEX  int     nc_getmouse(MEVENT *);
+PDCEX  mmask_t nc_mousemask(mmask_t, mmask_t *);
 PDCEX  int     ungetmouse(MEVENT *);
 PDCEX  bool    wenclose(const WINDOW *, int, int);
 PDCEX  bool    wmouse_trafo(const WINDOW *, int *, int *, bool);
@@ -1843,7 +1867,10 @@ PDCEX  int     wunderscore(WINDOW *);
                              else getyx(curscr,(y),(x)); }
 
 #ifdef NCURSES_MOUSE_VERSION
+PDCEX  mmask_t nc_mousemask(mmask_t, mmask_t *);
+
 # define getmouse(x) nc_getmouse(x)
+# define mousemask(x, ret_mask) nc_mousemask(x, ret_mask)
 #endif
 
 /* Deprecated */
@@ -1865,6 +1892,15 @@ PDCEX  int     wunderscore(WINDOW *);
 #define PDC_KEY_MODIFIER_ALT     4
 #define PDC_KEY_MODIFIER_NUMLOCK 8
 #define PDC_KEY_MODIFIER_REPEAT  16
+
+/* Modifier masks not used at present,  but which could be added to at  */
+/* least some platforms.  'Super' usually corresponds to the 'Windows' key. */
+
+#define PDC_KEY_MODIFIER_SUPER      0x20
+#define PDC_KEY_MODIFIER_CAPSLOCK   0x40
+#define PDC_KEY_MODIFIER_META       0x80
+#define PDC_KEY_MODIFIER_HYPER      0x100
+#define PDC_KEY_MODIFIER_MENU       0x200
 
 /* Bitflags for trace(), curses_trace(),  for ncurses compatibility.
 Values were copied from ncurses.  Note that those involving terminfo,
